@@ -20,6 +20,27 @@ def main():
             continue
         try:
             data = json.loads(line)
+            # 处理 JSON-RPC 协议
+            if isinstance(data, dict) and "method" in data:
+                method = data["method"]
+                if method == "initialize":
+                    # 返回初始化成功响应
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": data.get("id"),
+                        "result": {"capabilities": {}}
+                    }
+                    print(json.dumps(response), flush=True)
+                else:
+                    # 其他方法暂不支持
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": data.get("id"),
+                        "error": {"code": -32601, "message": f"Method '{method}' not implemented"}
+                    }
+                    print(json.dumps(response), flush=True)
+                continue
+            # 兼容原有 markdown 保存逻辑
             markdown_content = data.get("markdown")
             if not markdown_content:
                 print(json.dumps({"status": "error", "msg": "No 'markdown' field"}), flush=True)
