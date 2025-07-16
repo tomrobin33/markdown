@@ -44,6 +44,26 @@ def main():
                         "result": []
                     }
                     print(json.dumps(response), flush=True)
+                elif method in ["markdown/generate", "markdown/save"]:
+                    # 兼容 markdown/generate 和 markdown/save 方法
+                    markdown_content = data.get("params", {}).get("markdown")
+                    if not markdown_content:
+                        response = {
+                            "jsonrpc": "2.0",
+                            "id": data.get("id"),
+                            "error": {
+                                "code": -32602,
+                                "message": "Missing 'markdown' in params"
+                            }
+                        }
+                    else:
+                        filename = save_markdown(markdown_content, output_dir=".")
+                        response = {
+                            "jsonrpc": "2.0",
+                            "id": data.get("id"),
+                            "result": {"status": "ok", "filename": filename}
+                        }
+                    print(json.dumps(response), flush=True)
                 else:
                     # 统一返回 -32601 Method not implemented
                     response = {
@@ -56,13 +76,13 @@ def main():
                     }
                     print(json.dumps(response), flush=True)
                 continue
-            # 兼容原有 markdown 保存逻辑
+            # 兼容原有简单json格式
             markdown_content = data.get("markdown")
-            if not markdown_content:
-                print(json.dumps({"status": "error", "msg": "No 'markdown' field"}), flush=True)
+            if markdown_content:
+                filename = save_markdown(markdown_content, output_dir=".")
+                print(json.dumps({"status": "ok", "filename": filename}), flush=True)
                 continue
-            filename = save_markdown(markdown_content, output_dir=".")
-            print(json.dumps({"status": "ok", "filename": filename}), flush=True)
+            print(json.dumps({"status": "error", "msg": "No 'markdown' field"}), flush=True)
         except Exception as e:
             print(json.dumps({"status": "error", "msg": str(e)}), flush=True)
 
