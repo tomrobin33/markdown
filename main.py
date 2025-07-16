@@ -12,6 +12,8 @@ def save_markdown(content: str, output_dir: str = "./") -> str:
     return filename
 
 def main():
+    # 启动时输出 ready 信号
+    print(json.dumps({"status": "ready"}), flush=True)
     for line in sys.stdin:
         line = line.strip()
         if not line:
