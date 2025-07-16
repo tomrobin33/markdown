@@ -38,11 +38,14 @@ def main():
                     }
                     print(json.dumps(response), flush=True)
                 else:
-                    # 其他方法暂不支持
+                    # 统一返回 -32601 Method not implemented
                     response = {
                         "jsonrpc": "2.0",
                         "id": data.get("id"),
-                        "error": {"code": -32601, "message": f"Method '{method}' not implemented"}
+                        "error": {
+                            "code": -32601,
+                            "message": f"Method '{method}' not implemented"
+                        }
                     }
                     print(json.dumps(response), flush=True)
                 continue
