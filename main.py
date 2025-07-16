@@ -37,6 +37,13 @@ def main():
                         }
                     }
                     print(json.dumps(response), flush=True)
+                elif method == "tools/list":
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": data.get("id"),
+                        "result": []
+                    }
+                    print(json.dumps(response), flush=True)
                 else:
                     # 统一返回 -32601 Method not implemented
                     response = {
