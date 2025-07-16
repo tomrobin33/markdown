@@ -24,11 +24,17 @@ def main():
             if isinstance(data, dict) and "method" in data:
                 method = data["method"]
                 if method == "initialize":
-                    # 返回初始化成功响应
                     response = {
                         "jsonrpc": "2.0",
                         "id": data.get("id"),
-                        "result": {"capabilities": {}}
+                        "result": {
+                            "capabilities": {},
+                            "protocolVersion": data.get("params", {}).get("protocolVersion", "2024-11-05"),
+                            "serverInfo": {
+                                "name": "markdown-mcp-server",
+                                "version": "1.0.0"
+                            }
+                        }
                     }
                     print(json.dumps(response), flush=True)
                 else:
